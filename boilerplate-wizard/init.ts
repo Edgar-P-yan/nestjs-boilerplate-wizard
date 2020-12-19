@@ -32,9 +32,11 @@ async function main() {
 
   formatTheCode({ packageManager });
 
-  removeFilesAndModules({ packageManager });
+  removeModules({ packageManager });
 
   setUpTheRepository();
+
+  removeAndClearFiles();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -126,7 +128,7 @@ function formatTheCode(options: { packageManager: 'npm' | 'yarn' }) {
   }
 }
 
-function removeFilesAndModules(options: { packageManager: 'npm' | 'yarn' }) {
+function removeModules(options: { packageManager: 'npm' | 'yarn' }) {
   if (options.packageManager === 'yarn') {
     execa.commandSync(
       'yarn remove prompts @types/prompts upath execa rimraf @types/rimraf',
@@ -136,6 +138,20 @@ function removeFilesAndModules(options: { packageManager: 'npm' | 'yarn' }) {
       'npm remove prompts @types/prompts upath execa rimraf @types/rimraf',
     );
   }
+}
+
+function removeAndClearFiles() {
+  rimraf.sync(__dirname);
+
+  const packageJsonPath = path.join(__dirname, '..', 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+  delete packageJson.scripts.postinstall;
+
+  fs.writeFileSync(
+    packageJsonPath,
+    JSON.stringify(packageJson, null, 2) + '\n',
+  );
 }
 
 function setUpTheRepository() {

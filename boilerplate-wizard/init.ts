@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as execa from 'execa';
 import * as rimraf from 'rimraf';
 
-async function main() {
+async function main(): Promise<void> {
   const suggestedPackageName = getSuggestedPackageName();
 
   const answers = await prompts([
@@ -40,7 +40,7 @@ async function main() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function setUpTypeORM(options: { packageManager: 'npm' | 'yarn' }) {
+function setUpTypeORM(options: { packageManager: 'npm' | 'yarn' }): void {
   if (options.packageManager === 'yarn') {
     execa.commandSync('yarn add typeorm @nestjs/typeorm pg');
   } else {
@@ -96,7 +96,7 @@ function setUpTypeORM(options: { packageManager: 'npm' | 'yarn' }) {
   fs.writeFileSync(appModulePath, appModuleContent);
 }
 
-function modifyFiles(options: { packageName: string }) {
+function modifyFiles(options: { packageName: string }): void {
   const packageJsonPath = path.join(__dirname, '..', 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   packageJson.name = options.packageName;
@@ -120,7 +120,7 @@ function detectPackageManager(): 'yarn' | 'npm' {
   }
 }
 
-function formatTheCode(options: { packageManager: 'npm' | 'yarn' }) {
+function formatTheCode(options: { packageManager: 'npm' | 'yarn' }): void {
   if (options.packageManager === 'yarn') {
     execa.commandSync('yarn format');
   } else {
@@ -128,7 +128,7 @@ function formatTheCode(options: { packageManager: 'npm' | 'yarn' }) {
   }
 }
 
-function removeModules(options: { packageManager: 'npm' | 'yarn' }) {
+function removeModules(options: { packageManager: 'npm' | 'yarn' }): void {
   if (options.packageManager === 'yarn') {
     execa.commandSync(
       'yarn remove prompts @types/prompts upath execa rimraf @types/rimraf',
@@ -140,7 +140,7 @@ function removeModules(options: { packageManager: 'npm' | 'yarn' }) {
   }
 }
 
-function removeAndClearFiles() {
+function removeAndClearFiles(): void {
   rimraf.sync(__dirname);
 
   const packageJsonPath = path.join(__dirname, '..', 'package.json');
@@ -154,7 +154,7 @@ function removeAndClearFiles() {
   );
 }
 
-function setUpTheRepository() {
+function setUpTheRepository(): void {
   rimraf.sync(path.join(__dirname, '..', '.git'));
   execa.commandSync('git init');
 }

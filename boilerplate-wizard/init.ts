@@ -135,7 +135,7 @@ function removeModules(options: { packageManager: 'npm' | 'yarn' }): void {
     );
   } else {
     execa.commandSync(
-      'npm remove prompts @types/prompts upath execa rimraf @types/rimraf',
+      'npm uninstall prompts @types/prompts upath execa rimraf @types/rimraf',
     );
   }
 }

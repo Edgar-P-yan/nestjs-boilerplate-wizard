@@ -3,6 +3,7 @@ import * as upath from 'upath';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as execa from 'execa';
+import * as rimraf from 'rimraf';
 
 async function main() {
   const suggestedPackageName = getSuggestedPackageName();
@@ -30,6 +31,10 @@ async function main() {
   }
 
   formatTheCode({ packageManager });
+
+  removeFilesAndModules({ packageManager });
+
+  setUpTheRepository();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -119,6 +124,23 @@ function formatTheCode(options: { packageManager: 'npm' | 'yarn' }) {
   } else {
     execa.commandSync('npm run format');
   }
+}
+
+function removeFilesAndModules(options: { packageManager: 'npm' | 'yarn' }) {
+  if (options.packageManager === 'yarn') {
+    execa.commandSync(
+      'yarn remove prompts @types/prompts upath execa rimraf @types/rimraf',
+    );
+  } else {
+    execa.commandSync(
+      'npm remove prompts @types/prompts upath execa rimraf @types/rimraf',
+    );
+  }
+}
+
+function setUpTheRepository() {
+  rimraf.sync(path.join(__dirname, '..', '.git'));
+  execa.commandSync('git init');
 }
 
 main().catch((err) => {

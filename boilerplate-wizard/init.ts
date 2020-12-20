@@ -30,12 +30,12 @@ async function main(): Promise<void> {
       message: 'How are you gonna name your app?',
     },
     {
-      type: 'multiselect',
+      type: 'select',
       name: 'typeorm',
       message: `Select database type of TypeORM or select ${chalk.bold(
         'None',
       )} to skip TypeORM`,
-      initial: 'postgres',
+      initial: 1,
       choices: [
         { title: 'None', value: 'none' },
         { title: 'PostgreSQL', value: 'postgres' },

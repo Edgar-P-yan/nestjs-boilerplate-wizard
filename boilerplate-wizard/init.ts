@@ -4,6 +4,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as execa from 'execa';
 import * as rimraf from 'rimraf';
+import * as chalk from 'chalk';
+import { uninstallPackages } from './utils';
+import { initTypeOrm } from './typeorm/init-typeorm';
+
+const packagesToUninstallAfterWizardThing = [
+  'prompts',
+  '@types/prompts',
+  'upath',
+  'execa',
+  'rimraf',
+  '@types/rimraf',
+  'ejs',
+  '@types/ejs',
+];
 
 async function main(): Promise<void> {
   const suggestedPackageName = getSuggestedPackageName();
@@ -16,99 +30,40 @@ async function main(): Promise<void> {
       message: 'How are you gonna name your app?',
     },
     {
-      type: 'confirm',
-      name: 'setUpTypeOrm',
-      initial: true,
-      message: 'Do you want me to set up TypeORM?',
+      type: 'multiselect',
+      name: 'typeorm',
+      message: `Select database type of TypeORM or select ${chalk.bold(
+        'None',
+      )} to skip TypeORM`,
+      initial: 'postgres',
+      choices: [
+        { title: 'None', value: 'none' },
+        { title: 'PostgreSQL', value: 'postgres' },
+        { title: 'MySQL', value: 'mysql' },
+        { title: 'CockroachDB', value: 'cockroachdb' },
+        { title: 'MariaDB', value: 'mariadb' },
+      ],
     },
   ]);
 
+  const appRootPath = getAppRootPath();
   const packageManager = detectPackageManager();
+
   modifyFiles({ packageName: answers.packageName });
 
-  if (answers.setUpTypeOrm) {
-    setUpTypeORM({ packageManager });
+  if (answers.typeorm !== 'none') {
+    initTypeOrm({ packageManager, appRootPath, answers });
   }
 
-  formatTheCode({ packageManager });
-
-  removeModules({ packageManager });
+  uninstallPackages(packageManager, packagesToUninstallAfterWizardThing);
 
   removePackageManagerLockFilesFromGitIgnore();
 
   setUpTheRepository();
 
   removeAndClearFiles();
-}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function setUpTypeORM(options: { packageManager: 'npm' | 'yarn' }): void {
-  if (options.packageManager === 'yarn') {
-    execa.commandSync('yarn add typeorm @nestjs/typeorm pg');
-  } else {
-    execa.commandSync('npm install --save @nestjs/typeorm typeorm pg');
-  }
-
-  fs.copyFileSync(
-    path.join(__dirname, 'typeorm', 'ormconfig.ts'),
-    path.join(__dirname, '..', 'ormconfig.ts'),
-  );
-  fs.copyFileSync(
-    path.join(__dirname, 'typeorm', 'typeorm.config.ts'),
-    path.join(__dirname, '..', 'src', 'config', 'typeorm.config.ts'),
-  );
-  fs.appendFileSync(
-    path.join(__dirname, '..', '.env.example'),
-    fs.readFileSync(path.join(__dirname, 'typeorm', '.env.example')),
-  );
-
-  const configIndexPath = path.join(__dirname, '..', 'src/config/index.ts');
-  let configIndexContent = fs.readFileSync(configIndexPath, 'utf8');
-  configIndexContent =
-    `import { typeormConfigsFactory } from './typeorm.config';\n` +
-    configIndexContent;
-
-  configIndexContent = configIndexContent.replace(
-    /load:\s*\[/g,
-    `load: [typeormConfigsFactory, `,
-  );
-  fs.writeFileSync(configIndexPath, configIndexContent);
-
-  const appModulePath = path.join(
-    __dirname,
-    '..',
-    'src',
-    'app',
-    'app.module.ts',
-  );
-
-  let appModuleContent = fs.readFileSync(appModulePath, 'utf8');
-
-  // import the ConfigService from @nestjs/config
-  appModuleContent =
-    `import { ConfigService } from '@nestjs/config';\n` + appModuleContent;
-
-  // import the TypeOrmModule from @nestjs/typeorm
-  appModuleContent =
-    `import { TypeOrmModule } from '@nestjs/typeorm';\n` + appModuleContent;
-
-  appModuleContent = appModuleContent.replace(
-    /imports:\s*\[/g,
-    `imports: [
-      TypeOrmModule.forRootAsync({
-        useFactory: (configService: ConfigService) => configService.get('typeorm'),
-        inject: [ConfigService],
-      }),
-    `,
-  );
-
-  fs.writeFileSync(appModulePath, appModuleContent);
-
-  fs.mkdirSync(path.join(__dirname, '..', 'src', 'migrations'));
-  fs.writeFileSync(
-    path.join(__dirname, '..', 'src', 'migrations', '.gitkeep'),
-    '',
-  );
+  formatTheCode({ packageManager });
 }
 
 function modifyFiles(options: { packageName: string }): void {
@@ -143,18 +98,6 @@ function formatTheCode(options: { packageManager: 'npm' | 'yarn' }): void {
   }
 }
 
-function removeModules(options: { packageManager: 'npm' | 'yarn' }): void {
-  if (options.packageManager === 'yarn') {
-    execa.commandSync(
-      'yarn remove prompts @types/prompts upath execa rimraf @types/rimraf',
-    );
-  } else {
-    execa.commandSync(
-      'npm uninstall prompts @types/prompts upath execa rimraf @types/rimraf',
-    );
-  }
-}
-
 function removeAndClearFiles(): void {
   rimraf.sync(__dirname);
 
@@ -180,13 +123,14 @@ function removePackageManagerLockFilesFromGitIgnore(): void {
 
   gitignoreContent = gitignoreContent.replace('\n/yarn.lock\n', '\n');
 
-  fs.writeFileSync(
-    gitignorePath,
-    gitignoreContent,
-  );
+  fs.writeFileSync(gitignorePath, gitignoreContent);
 }
 
-if(!process.env.DONT_INIT_WIZARD) {
+function getAppRootPath(): string {
+  return path.join(__dirname, '..');
+}
+
+if (!process.env.DONT_INIT_WIZARD) {
   main().catch((err) => {
     console.error(err);
     process.exit(1);

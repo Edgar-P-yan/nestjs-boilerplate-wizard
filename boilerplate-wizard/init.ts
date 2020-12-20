@@ -72,7 +72,14 @@ function setUpTypeORM(options: { packageManager: 'npm' | 'yarn' }): void {
   );
   fs.writeFileSync(configIndexPath, configIndexContent);
 
-  const appModulePath = path.join(__dirname, '..', 'src/app/app.module.ts');
+  const appModulePath = path.join(
+    __dirname,
+    '..',
+    'src',
+    'app',
+    'app.module.ts',
+  );
+
   let appModuleContent = fs.readFileSync(appModulePath, 'utf8');
 
   // import the ConfigService from @nestjs/config
@@ -94,6 +101,12 @@ function setUpTypeORM(options: { packageManager: 'npm' | 'yarn' }): void {
   );
 
   fs.writeFileSync(appModulePath, appModuleContent);
+
+  fs.mkdirSync(path.join(__dirname, '..', 'src', 'migrations'));
+  fs.writeFileSync(
+    path.join(__dirname, '..', 'src', 'migrations', '.gitkeep'),
+    '',
+  );
 }
 
 function modifyFiles(options: { packageName: string }): void {

@@ -52,7 +52,7 @@ async function main(): Promise<void> {
   modifyFiles({ packageName: answers.packageName });
 
   if (answers.typeorm !== 'none') {
-    initTypeOrm({ packageManager, appRootPath, answers });
+    await initTypeOrm({ packageManager, appRootPath, answers });
   }
 
   uninstallPackages(packageManager, packagesToUninstallAfterWizardThing);

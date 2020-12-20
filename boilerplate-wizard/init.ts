@@ -186,7 +186,9 @@ function removePackageManagerLockFilesFromGitIgnore(): void {
   );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if(!process.env.DONT_INIT_WIZARD) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

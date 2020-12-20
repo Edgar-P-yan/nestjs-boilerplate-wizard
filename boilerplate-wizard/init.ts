@@ -34,6 +34,8 @@ async function main(): Promise<void> {
 
   removeModules({ packageManager });
 
+  removePackageManagerLockFilesFromGitIgnore();
+
   setUpTheRepository();
 
   removeAndClearFiles();
@@ -170,6 +172,18 @@ function removeAndClearFiles(): void {
 function setUpTheRepository(): void {
   rimraf.sync(path.join(__dirname, '..', '.git'));
   execa.commandSync('git init');
+}
+
+function removePackageManagerLockFilesFromGitIgnore(): void {
+  const gitignorePath = path.join(__dirname, '..', '.gitignore');
+  let gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
+
+  gitignoreContent = gitignoreContent.replace('\n/yarn.lock\n', '\n');
+
+  fs.writeFileSync(
+    gitignorePath,
+    gitignoreContent,
+  );
 }
 
 main().catch((err) => {

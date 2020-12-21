@@ -6,7 +6,7 @@ export const typeormConfigsFactory = registerAs(
   (): ConnectionOptions => ({
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-    type: '<% dbType %>',
+    type: '<%- dbType %>',
     host: process.env.DB_HOST,
     port: +process.env.DB_PORT,
     username: process.env.DB_USERNAME,

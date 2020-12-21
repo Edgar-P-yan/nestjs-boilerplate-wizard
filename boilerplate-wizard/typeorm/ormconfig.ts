@@ -8,7 +8,7 @@ for (const envName of Object.keys(process.env)) {
 }
 
 (module.exports as ConnectionOptions) = {
-  type: '<% dbType %>',
+  type: '<%- dbType %>',
   host: process.env.DB_HOST,
   port: +process.env.DB_PORT,
   username: process.env.DB_USERNAME,

@@ -57,8 +57,6 @@ async function main(): Promise<void> {
 
   uninstallPackages(packageManager, packagesToUninstallAfterWizardThing);
 
-  removePackageManagerLockFilesFromGitIgnore();
-
   setUpTheRepository();
 
   removeAndClearFiles();
@@ -99,8 +97,10 @@ function formatTheCode(options: { packageManager: 'npm' | 'yarn' }): void {
 }
 
 function removeAndClearFiles(): void {
+  // Remove /boilerplate-wizard folder
   rimraf.sync(__dirname);
 
+  // Remove the postinstall script from package.json
   const packageJsonPath = path.join(__dirname, '..', 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 
@@ -110,20 +110,21 @@ function removeAndClearFiles(): void {
     packageJsonPath,
     JSON.stringify(packageJson, null, 2) + '\n',
   );
+
+  // Remove /yarn.lock and /test-dir from .gitignore
+  const gitignorePath = path.join(__dirname, '..', '.gitignore');
+  let gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
+
+  gitignoreContent = gitignoreContent
+    .replace('\n/yarn.lock', '')
+    .replace('\n/test-dir', '');
+
+  fs.writeFileSync(gitignorePath, gitignoreContent);
 }
 
 function setUpTheRepository(): void {
   rimraf.sync(path.join(__dirname, '..', '.git'));
   execa.commandSync('git init');
-}
-
-function removePackageManagerLockFilesFromGitIgnore(): void {
-  const gitignorePath = path.join(__dirname, '..', '.gitignore');
-  let gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
-
-  gitignoreContent = gitignoreContent.replace('\n/yarn.lock\n', '\n');
-
-  fs.writeFileSync(gitignorePath, gitignoreContent);
 }
 
 function getAppRootPath(): string {

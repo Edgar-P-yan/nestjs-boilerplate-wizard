@@ -25,7 +25,7 @@ export async function initDocker(params: {
     'utf8',
   );
 
-  let envExample = fs.readFileSync(path.join(__dirname, '.env'), 'utf8');
+  let envExample = fs.readFileSync(path.join(__dirname, '.env.example'), 'utf8');
 
   if (params.answers.typeorm === 'postgres') {
     envExample += '$DOCKER_COMPOSE_POSTGRES_PORT=127.0.0.1:5432\n';
@@ -40,5 +40,5 @@ export async function initDocker(params: {
     dockerComposeYml,
   );
 
-  fs.appendFileSync(path.join(params.appRootPath, '.example.env'), envExample);
+  fs.appendFileSync(path.join(params.appRootPath, '.env.example'), envExample);
 }

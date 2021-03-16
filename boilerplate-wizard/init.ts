@@ -132,7 +132,7 @@ function setUpTheRepository(): void {
   rimraf.sync(path.join(__dirname, '..', '.git'));
   execa.commandSync('git init');
   execa.commandSync('git checkout -b main');
-  execa.commandSync('git checkout -D master');
+  execa.commandSync('git branch -D master');
 }
 
 function getAppRootPath(): string {

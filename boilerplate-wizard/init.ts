@@ -8,6 +8,7 @@ import * as chalk from 'chalk';
 import { uninstallPackages } from './utils';
 import { initTypeOrm } from './typeorm/init-typeorm';
 import { initDocker } from './docker/init-docker';
+import { initReadme } from './readme/init-readme';
 
 const packagesToUninstallAfterWizardThing = [
   'prompts',
@@ -57,6 +58,8 @@ async function main(): Promise<void> {
   }
 
   await initDocker({ packageManager, appRootPath, answers });
+
+  await initReadme({ packageManager, appRootPath, answers })
 
   uninstallPackages(packageManager, packagesToUninstallAfterWizardThing);
 
@@ -128,6 +131,8 @@ function removeAndClearFiles(): void {
 function setUpTheRepository(): void {
   rimraf.sync(path.join(__dirname, '..', '.git'));
   execa.commandSync('git init');
+  execa.commandSync('git checkout -b main');
+  execa.commandSync('git checkout -D master');
 }
 
 function getAppRootPath(): string {

@@ -7,6 +7,7 @@ import * as rimraf from 'rimraf';
 import * as chalk from 'chalk';
 import { uninstallPackages } from './utils';
 import { initTypeOrm } from './typeorm/init-typeorm';
+import { initDocker } from './docker/init-docker';
 
 const packagesToUninstallAfterWizardThing = [
   'prompts',
@@ -54,6 +55,8 @@ async function main(): Promise<void> {
   if (answers.typeorm !== 'none') {
     await initTypeOrm({ packageManager, appRootPath, answers });
   }
+
+  await initDocker({ packageManager, appRootPath, answers });
 
   uninstallPackages(packageManager, packagesToUninstallAfterWizardThing);
 

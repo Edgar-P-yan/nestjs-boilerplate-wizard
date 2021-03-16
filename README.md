@@ -27,7 +27,8 @@ Then it will ask you what features do you want to enable in the boilerplate.
 TODO: add screenshots of wizard doing his magic
 
 ## List of currently available features:
- - **TypeORM** integration
+ - 📖 **TypeORM** integration
+ - 🐳 **Docker and Docker Compose** automatic configuration generator
  - ... stay tuned, there is gonna be more ;)
 
 ## Stay in touch

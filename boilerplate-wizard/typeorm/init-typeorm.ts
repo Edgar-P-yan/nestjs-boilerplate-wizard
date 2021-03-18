@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as prompts from 'prompts';
 import * as ejs from 'ejs';
 import { installPackages } from '../utils';
+import * as _ from 'lodash';
 
 const dbTypeToDriverPackageName = {
   postgres: 'pg',
@@ -21,7 +22,7 @@ const dbTypeToDefaultPort = {
 export async function initTypeOrm(options: {
   packageManager: 'npm' | 'yarn';
   appRootPath: string;
-  answers: prompts.Answers<'typeorm'>;
+  answers: prompts.Answers<'packageName' | 'typeorm'>;
 }): Promise<void> {
   const dbDriverPackageName =
     dbTypeToDriverPackageName[options.answers.typeorm];
@@ -53,7 +54,7 @@ export async function initTypeOrm(options: {
       dbPort: dbTypeToDefaultPort[options.answers.typeorm],
       dbUsername: options.answers.typeorm,
       dbPassword: options.answers.typeorm,
-      dbName: '',
+      dbName: _.snakeCase(options.answers.packageName),
     }),
   );
 

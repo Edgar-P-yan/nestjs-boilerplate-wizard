@@ -21,6 +21,8 @@ const packagesToUninstallAfterWizardThing = [
   '@types/rimraf',
   'ejs',
   '@types/ejs',
+  'lodash',
+  '@types/lodash',
 ];
 
 async function main(): Promise<void> {

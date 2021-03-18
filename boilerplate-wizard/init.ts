@@ -9,6 +9,8 @@ import { uninstallPackages } from './utils';
 import { initTypeOrm } from './typeorm/init-typeorm';
 import { initDocker } from './docker/init-docker';
 import { initReadme } from './readme/init-readme';
+import { initSwagger } from './swagger/init-swagger';
+import * as ejs from 'ejs';
 
 const packagesToUninstallAfterWizardThing = [
   'prompts',
@@ -46,6 +48,16 @@ async function main(): Promise<void> {
         { title: 'MariaDB', value: 'mariadb' },
       ],
     },
+    {
+      type: 'select',
+      name: 'addSwagger',
+      message: `Do you want Swagger UI?`,
+      initial: 1,
+      choices: [
+        { title: 'Yes!', value: true },
+        { title: 'Nope', value: false },
+      ],
+    },
   ]);
 
   const appRootPath = getAppRootPath();
@@ -53,13 +65,28 @@ async function main(): Promise<void> {
 
   modifyFiles({ packageName: answers.packageName });
 
+  const modificationsForCommonFiles: {
+    addToMainTs: { newLines: string; newImports: string };
+  }[] = [];
+
   if (answers.typeorm !== 'none') {
     await initTypeOrm({ packageManager, appRootPath, answers });
   }
 
   await initDocker({ packageManager, appRootPath, answers });
 
-  await initReadme({ packageManager, appRootPath, answers })
+  await initReadme({ packageManager, appRootPath, answers });
+
+  if (answers.addSwagger) {
+    const result = await initSwagger({ packageManager, appRootPath, answers });
+    modificationsForCommonFiles.push(result);
+  }
+
+  if (modificationsForCommonFiles.length) {
+    await applyModificationsForCommonFiles(modificationsForCommonFiles, {
+      appRootPath,
+    });
+  }
 
   uninstallPackages(packageManager, packagesToUninstallAfterWizardThing);
 
@@ -68,6 +95,29 @@ async function main(): Promise<void> {
   removeAndClearFiles();
 
   formatTheCode({ packageManager });
+}
+
+async function applyModificationsForCommonFiles(
+  modificationsForCommonFiles: {
+    addToMainTs: { newLines: string; newImports: string };
+  }[],
+  params: { appRootPath: string },
+): Promise<void> {
+  const addToMainTsNewLines = modificationsForCommonFiles
+    .map((modification) => modification.addToMainTs.newLines)
+    .join('\n');
+
+  const addToMainTsImports = modificationsForCommonFiles
+    .map((modification) => modification.addToMainTs.newImports)
+    .join('\n');
+
+  fs.writeFileSync(
+    path.join(params.appRootPath, 'src', 'main.ts'),
+    await ejs.renderFile(path.join(__dirname, 'common-files', 'main.ts'), {
+      newLines: addToMainTsNewLines,
+      newImports: addToMainTsImports,
+    }),
+  );
 }
 
 function modifyFiles(options: { packageName: string }): void {

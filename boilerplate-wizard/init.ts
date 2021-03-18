@@ -52,7 +52,7 @@ async function main(): Promise<void> {
       type: 'select',
       name: 'addSwagger',
       message: `Do you want Swagger UI?`,
-      initial: 1,
+      initial: 0,
       choices: [
         { title: 'Yes!', value: true },
         { title: 'Nope', value: false },

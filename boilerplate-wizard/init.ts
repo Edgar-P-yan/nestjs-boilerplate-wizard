@@ -11,6 +11,7 @@ import { initDocker } from './docker/init-docker';
 import { initReadme } from './readme/init-readme';
 import { initSwagger } from './swagger/init-swagger';
 import * as ejs from 'ejs';
+import { initValidationPipe } from './validation-pipe/init-validation-pipe';
 
 const packagesToUninstallAfterWizardThing = [
   'prompts',
@@ -60,6 +61,16 @@ async function main(): Promise<void> {
         { title: 'Nope', value: false },
       ],
     },
+    {
+      type: 'select',
+      name: 'addValidationPipe',
+      message: `Do you want ValidationPipe?`,
+      initial: 0,
+      choices: [
+        { title: 'Yes!', value: true },
+        { title: 'Nope', value: false },
+      ],
+    },
   ]);
 
   const appRootPath = getAppRootPath();
@@ -81,6 +92,15 @@ async function main(): Promise<void> {
 
   if (answers.addSwagger) {
     const result = await initSwagger({ packageManager, appRootPath, answers });
+    modificationsForCommonFiles.push(result);
+  }
+
+  if (answers.addValidationPipe) {
+    const result = await initValidationPipe({
+      packageManager,
+      appRootPath,
+      answers,
+    });
     modificationsForCommonFiles.push(result);
   }
 

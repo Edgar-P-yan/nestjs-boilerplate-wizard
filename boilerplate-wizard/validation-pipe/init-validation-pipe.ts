@@ -15,12 +15,12 @@ export async function initValidationPipe(params: {
     addToMainTs: {
       newImports: `import { ValidationPipe } from '@nestjs/common';`,
       newLines:
-        `  app.useGlobalPipes({\n` +
+        `  app.useGlobalPipes(\n` +
         `    new ValidationPipe({\n` +
         `      whitelist: true,\n` +
         `      transform: true,\n` +
         `    }),\n` +
-        `  });`,
+        `  );`,
     },
   };
 }

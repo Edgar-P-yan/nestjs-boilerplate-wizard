@@ -29,6 +29,8 @@ TODO: add screenshots of wizard doing his magic
 ## List of currently available features:
  - 📖 **TypeORM** integration
  - 🐳 **Docker and Docker Compose** automatic configuration generator
+ - 📕 **Swagger UI for API Documentation**
+ - ☑️ **Automatic ValidationPipe configuration**
  - ... stay tuned, there is gonna be more ;)
 
 ## Stay in touch

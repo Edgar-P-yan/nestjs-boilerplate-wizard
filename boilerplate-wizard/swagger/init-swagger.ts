@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as prompts from 'prompts';
-import * as ejs from 'ejs';
+import fs from 'fs';
+import path from 'path';
+import prompts from 'prompts';
+import ejs from 'ejs';
 import { installPackages } from '../utils';
 
 export async function initSwagger(params: {

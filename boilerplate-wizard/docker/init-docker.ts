@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as prompts from 'prompts';
-import * as ejs from 'ejs';
+import fs from 'fs';
+import path from 'path';
+import prompts from 'prompts';
+import ejs from 'ejs';
 
 export async function initDocker(params: {
   packageManager: 'npm' | 'yarn';
@@ -25,7 +25,10 @@ export async function initDocker(params: {
     'utf8',
   );
 
-  let envExample = fs.readFileSync(path.join(__dirname, '.env.example'), 'utf8');
+  let envExample = fs.readFileSync(
+    path.join(__dirname, '.env.example'),
+    'utf8',
+  );
 
   if (params.answers.typeorm === 'postgres') {
     envExample += '$DOCKER_COMPOSE_POSTGRES_PORT=127.0.0.1:5432\n';

@@ -1,16 +1,16 @@
-import * as prompts from 'prompts';
-import * as upath from 'upath';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as execa from 'execa';
-import * as rimraf from 'rimraf';
-import * as chalk from 'chalk';
+import prompts from 'prompts';
+import upath from 'upath';
+import fs from 'fs';
+import path from 'path';
+import execa from 'execa';
+import rimraf from 'rimraf';
+import chalk from 'chalk';
 import { uninstallPackages } from './utils';
 import { initTypeOrm } from './typeorm/init-typeorm';
 import { initDocker } from './docker/init-docker';
 import { initReadme } from './readme/init-readme';
 import { initSwagger } from './swagger/init-swagger';
-import * as ejs from 'ejs';
+import ejs from 'ejs';
 import { initValidationPipe } from './validation-pipe/init-validation-pipe';
 
 const packagesToUninstallAfterWizardThing = [

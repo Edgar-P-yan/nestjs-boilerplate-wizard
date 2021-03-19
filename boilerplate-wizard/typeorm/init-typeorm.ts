@@ -1,9 +1,9 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as prompts from 'prompts';
-import * as ejs from 'ejs';
+import fs from 'fs';
+import path from 'path';
+import prompts from 'prompts';
+import ejs from 'ejs';
 import { installPackages } from '../utils';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 const dbTypeToDriverPackageName = {
   postgres: 'pg',

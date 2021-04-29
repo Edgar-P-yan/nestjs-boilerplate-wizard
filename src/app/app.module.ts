@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { configModuleOptions } from 'src/config';
+import { configModuleOptions } from '../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 

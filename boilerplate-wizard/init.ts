@@ -117,6 +117,11 @@ async function main(): Promise<void> {
   removeAndClearFiles();
 
   formatTheCode({ packageManager });
+
+  await fs.promises.copyFile(
+    path.join(appRootPath, '.env.example'),
+    path.join(appRootPath, '.env'),
+  );
 }
 
 async function applyModificationsForCommonFiles(

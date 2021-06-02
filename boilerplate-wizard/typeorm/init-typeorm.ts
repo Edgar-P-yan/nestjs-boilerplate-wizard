@@ -34,8 +34,8 @@ export async function initTypeOrm(options: {
   ]);
 
   fs.writeFileSync(
-    path.join(options.appRootPath, 'ormconfig.ts'),
-    await ejs.renderFile(path.join(__dirname, 'ormconfig.ts'), {
+    path.join(options.appRootPath, 'ormconfig.js'),
+    await ejs.renderFile(path.join(__dirname, 'ormconfig.js'), {
       dbType: options.answers.typeorm,
     }),
   );

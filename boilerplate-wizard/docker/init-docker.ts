@@ -31,7 +31,7 @@ export async function initDocker(params: {
   );
 
   if (params.answers.typeorm === 'postgres') {
-    envExample += '$DOCKER_COMPOSE_POSTGRES_PORT=127.0.0.1:5432\n';
+    envExample += 'DOCKER_COMPOSE_POSTGRES_PORT=127.0.0.1:5432\n';
     dockerComposeYml += fs.readFileSync(
       path.join(__dirname, 'postgres-append.docker-compose.yml'),
       'utf8',
